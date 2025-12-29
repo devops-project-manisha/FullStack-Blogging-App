@@ -15,7 +15,7 @@ pipeline {
                         sh 'mvn clean package'
                     } catch (Exception e) {
                         echo "Build failed: ${e}"
-                        currentBuild.result = 'FAILURE'  
+                        currentBuild.result = 'fail'  
                     }
                 }
             }
