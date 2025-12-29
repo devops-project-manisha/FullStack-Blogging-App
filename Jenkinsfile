@@ -36,6 +36,13 @@ pipeline {
             }
         }
        }
+        stage ("Next stage test"){
+	      steps{
+		      echo "pipeline reached next level palvi"
+		  
+		  }
+	   
+	   }
        
     }
 }
