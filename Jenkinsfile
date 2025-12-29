@@ -14,7 +14,7 @@ pipeline {
                     try {
                         sh 'mvn clean package'
                     } catch (Exception e) {
-                        echo "I am inside Docker catch block"
+                        
                         echo "Build failed: ${e}"
                         currentBuild.result = 'fail'  
                     }
@@ -28,6 +28,7 @@ pipeline {
                     try{
                     sh 'docker build -t fullstack-blogging app .'
                 } catch(Exception e) {
+                    echo "I am inside Docker catch block"
                     echo "Docker build failed: ${e}"
                     currentBuild.result = 'FAILURE'
                 }
