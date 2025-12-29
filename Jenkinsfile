@@ -15,6 +15,7 @@ pipeline {
                         sh 'mvn clean package'
                     } catch (Exception e) {
                         echo "Build failed: ${e}"
+                        echo "I am inside catch block for Docker stage"
                         currentBuild.result = 'fail'  
                     }
                 }
