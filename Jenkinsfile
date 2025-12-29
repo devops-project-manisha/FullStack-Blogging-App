@@ -1,9 +1,9 @@
 pipeline {
     agent any
-	
-	environment {
-	 SCANNER_HOME = tool 'SonarScanner'
-	}
+
+    environment {
+        SCANNER_HOME = tool 'SonarScanner'
+    }
 
     stages {
         stage('Git Checkout') {
@@ -20,54 +20,58 @@ pipeline {
                     } catch (Exception e) {
                         echo "Build failed: ${e}"
                         currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to build failure") // Stop pipeline on failure
                     }
                 }
             }
         }
-		
-		stage ('Sonarqube Analysis') {
-		    steps {
-			   withSonarQubeEnv('SonarQube'){
-			     sh "${SCANNER_HOME}/bin/sonar-scanner"
-			   }
-			}
-		
-		}
 
-        stage("Building Docker image") {
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh """
+                        ${SCANNER_HOME}/bin/sonar-scanner \
+                        -Dsonar.projectKey=task-master-pro \
+                        -Dsonar.sources=.
+                    """
+                }
+            }
+        }
+
+        stage('Building Docker image') {
             steps {
                 script {
                     try {
                         sh 'docker build -t fullstack-blogging-app .'
                     } catch(Exception e) {
-                        echo "I am inside Docker catch block"
                         echo "Docker build failed: ${e}"
                         currentBuild.result = 'FAILURE'
+                        error("Stopping pipeline due to Docker build failure") // Stop pipeline
                     }
                 }
             }
         }
 
-        stage ("Next stage test") {
+        stage('Next stage test') {
             steps {
-                echo "pipeline reached next level palvi"
+                echo "Pipeline reached next level, Pallavi"
             }
         }
     }
-	
-	
-	
-	
 
     post {
-    always {
-        cleanWs()
+        always {
+            cleanWs()
+        }
+        success {
+            mail to: 'walunjpallavi69@gmail.com',
+                 subject: '🎉 Build Successful 🎉',
+                 body: 'Congrats Pallavi! The Jenkins build and deployment were successful 🎉'
+        }
+        failure {
+            mail to: 'walunjpallavi69@gmail.com',
+                 subject: '❌ Build Failed ❌',
+                 body: 'Oops! The Jenkins build or deployment failed. Please check the logs.'
+        }
     }
-    success {
-        mail to: 'walunjpallavi69@gmail.com',
-             subject: '🎉 Build Successful 🎉',
-             body: 'Congrats Pallavi! The Jenkins build and deployment were successful 🎉'
-    }
-}
-
 }
