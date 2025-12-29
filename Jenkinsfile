@@ -23,7 +23,13 @@ pipeline {
 
         stage("Building Docker image"){
             steps{
-            sh 'docker build -t fullstack-blogging app .'
+                script{
+                    sh 'docker build -t fullstack-blogging-app .'
+                } catch(Exception e) {
+                    echo "Docker build failed: ${e}"
+                    currentBuild.result = 'FAILURE'
+                }
+
             }
         }
 
