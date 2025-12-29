@@ -20,7 +20,7 @@ pipeline {
                     } catch (Exception e) {
                         echo "Build failed: ${e}"
                         currentBuild.result = 'FAILURE'
-                        error("Stopping pipeline due to build failure") // Stop pipeline on failure
+                        error("Stopping pipeline due to build failure")
                     }
                 }
             }
@@ -32,7 +32,8 @@ pipeline {
                     sh """
                         ${SCANNER_HOME}/bin/sonar-scanner \
                         -Dsonar.projectKey=task-master-pro \
-                        -Dsonar.sources=.
+                        -Dsonar.sources=. \
+                        -Dsonar.java.binaries=target/classes
                     """
                 }
             }
@@ -43,10 +44,10 @@ pipeline {
                 script {
                     try {
                         sh 'docker build -t fullstack-blogging-app .'
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         echo "Docker build failed: ${e}"
                         currentBuild.result = 'FAILURE'
-                        error("Stopping pipeline due to Docker build failure") // Stop pipeline
+                        error("Stopping pipeline due to Docker build failure")
                     }
                 }
             }
