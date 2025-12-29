@@ -21,6 +21,12 @@ pipeline {
             }
         }
 
+        stage("Building Docker image"){
+            steps{
+            sh 'docker build -t fullstack-blogging app .'
+            }
+        }
+
        
     }
 }
